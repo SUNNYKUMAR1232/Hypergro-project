@@ -10,21 +10,25 @@ import morganConfig from './common/config/morgan.config'
 import HelmetConfig from './common/config/helmet.config'
 import corsConfig from './common/config/cors.config'
 import loadEnvironmentVariables from './common/config/env.config'
+import Database from './common/config/db.config'
+import authRoutes from './src/routes/auth.routes'
+import propertyRoutes from './src/routes/property.routes'
+import userRoutes from './src/routes/user.routes'
 
 class App {
-  private readonly App: Application = express();
-  private readonly PORT: string | number = process.env.PORT || 5000;
-  private readonly HOST: string = process.env.HOST || 'localhost';
+  private readonly App: Application = express()
+  private readonly PORT: string | number = process.env.PORT || 5000
+  private readonly HOST: string = process.env.HOST || 'localhost'
 
   constructor() {
-    this.init();
+    this.init()
   }
 
   private async init() {
-    this.initConfig();
-    this.initMiddlewares();
-    this.initRoutes();
-    this.initErrorHandling();
+    this.initConfig()
+    this.initMiddlewares()
+    this.initRoutes()
+    this.initErrorHandling()
   }
 
   private initConfig() {
@@ -32,51 +36,54 @@ class App {
     HelmetConfig.init(this.App)
     corsConfig.init(this.App)
     loadEnvironmentVariables()
+    new Database() // Initialize the database connection
   }
 
   private initMiddlewares() {
-    this.App.use(express.json());
-    this.App.use(BodyParser.json());
-    this.App.use(BodyParser.urlencoded({ extended: true }));
-      this.App.use(cookieParser());
-    this.App.use(cors());
-        // Only apply CSRF to non-API routes
-  this.App.use((req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    return csrf({ cookie: true })(req, res, next);
-  })
+    this.App.use(express.json())
+    this.App.use(BodyParser.json())
+    this.App.use(BodyParser.urlencoded({ extended: true }))
+    this.App.use(cookieParser())
+    this.App.use(cors())
+    // Only apply CSRF to non-API routes
+    this.App.use((req, res, next) => {
+      if (req.path.startsWith('/api')) return next()
+      return csrf({ cookie: true })(req, res, next)
+    })
     // view engine setup
-//     this.App.set('views', path.join(__dirname, '../dist/views'))
-//     this.App.set('view engine', 'ejs')
+    //     this.App.set('views', path.join(__dirname, '../dist/views'))
+    //     this.App.set('view engine', 'ejs')
 
-//     // Serve static files from the public directory
-//     this.App.use(
-//       '/api/public',
-//       express.static(path.join(__dirname, '../dist/public'))
-//     )
+    //     // Serve static files from the public directory
+    //     this.App.use(
+    //       '/api/public',
+    //       express.static(path.join(__dirname, '../dist/public'))
+    //     )
   }
 
   private initRoutes() {
     //this.App.use('/api/v1/', require('./routes/index').default);
-      // Example route
-      this.App.get('/', (_: Request, res: Response) => {
-        res.status(200).json({ message: 'Welcome to the API!' });
-      });
+    this.App.use('/api/v1/auth', authRoutes)
+    this.App.use('/api/v1/property', propertyRoutes)
+    this.App.use('/api/v1/user', userRoutes)
+    // Example route
+
+    this.App.get('/', (_: Request, res: Response) => {
+      res.status(200).json({ message: 'Welcome to the API!' })
+    })
   }
 
   private initErrorHandling() {
-
-
     // Middleware for handling 404 errors
     this.App.use((_req: Request, _res: Response, next: NextFunction) => {
-      next(createHttpError(404));
-    });
+      next(createHttpError(404))
+    })
   }
 
   public listen() {
     this.App.listen(this.PORT, () => {
-      console.log(`Server is running on http://${this.HOST}:${this.PORT}`);
-    });
+      console.log(`Server is running on http://${this.HOST}:${this.PORT}`)
+    })
   }
 }
 
