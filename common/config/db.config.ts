@@ -5,7 +5,9 @@ class Database {
   private readonly RETRY_INTERVAL = 5000
 
   constructor() {
-    this.URI = process.env.MONGO_URI || 'your mongo url'
+    this.URI =
+      process.env.MONGO_URI ||
+      'mongodb://localhost:27017/mydatabase?authSource=admin'
     this.connect()
   }
 
