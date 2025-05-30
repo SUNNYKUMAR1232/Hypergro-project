@@ -13,6 +13,9 @@ export interface IUser extends Document {
   name?: string
   favorites: Types.ObjectId[]
   recommendationsReceived: Recommendation[]
+  roles: string[]
+  blocked: boolean
+  isVerified: boolean
   dateCreated: Date
   dateUpdated: Date
   comparePassword(password: string): Promise<boolean>
@@ -30,6 +33,12 @@ const UserSchema = new Schema<IUser>({
       date: { type: Date, default: Date.now }
     }
   ],
+  roles: {
+    type: [String],
+    enum: ['user', 'admin'],
+    default: ['user']
+  },
+  blocked: { type: Boolean, default: false },
   dateCreated: { type: Date, default: Date.now },
   dateUpdated: { type: Date, default: Date.now }
 })

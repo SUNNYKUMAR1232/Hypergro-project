@@ -50,4 +50,46 @@ export class UserController {
       return res.status(500).json({ message: 'Server error', error: err })
     }
   }
+  static async userBlockByAdmin(req: Request, res: Response) {
+    try {
+      const userId = req.params.id // Assuming the user ID is passed in the URL
+      const block = req.body.blocked // Expecting { block: true/false }
+      const result = await userService.userBlock(userId, block)
+      return res.status(200).json(result)
+    } catch (err: any) {
+      console.error('Error blocking/unblocking user:', err)
+      return res.status(500).json({ message: 'Internal Server Error' })
+    }
+  }
+  static async assignRoleByAdmin(req: Request, res: Response) {
+    try {
+      const userId = req.params.id // Assuming the user ID is passed in the URL
+      const roles = req.body.roles // Expecting { roles: ['role1', 'role2'] }
+      const result = await userService.assignRole(userId, roles)
+      return res.status(200).json(result)
+    } catch (err: any) {
+      console.error('Error assigning role:', err)
+      return res.status(500).json({ message: 'Internal Server Error' })
+    }
+  }
+  static async logout(req: Request, res: Response) {
+    try {
+      const userId = req.user!.id
+      const result = await userService.logout(userId)
+      return res.status(200).json(result)
+    } catch (err: any) {
+      console.error('Error logging out:', err)
+      return res.status(500).json({ message: 'Internal Server Error' })
+    }
+  }
+  static async deleteUser(req: Request, res: Response) {
+    try {
+      const userId = req.user!.id
+      const result = await userService.deleteUser(userId)
+      return res.status(200).json(result)
+    } catch (err: any) {
+      console.error('Error deleting user:', err)
+      return res.status(500).json({ message: 'Internal Server Error' })
+    }
+  }
 }
