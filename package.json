@@ -1,0 +1,45 @@
+{
+  "name": "hypergro_project",
+  "version": "1.0.0",
+  "description": "\"# Hypergro-project\"",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"tsc --watch\" \"nodemon -r tsconfig-paths/register ./dist/server.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SUNNYKUMAR1232/Hypergro-project.git"
+  },
+  "author": "Sunny Kumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SUNNYKUMAR1232/Hypergro-project/issues"
+  },
+  "homepage": "https://github.com/SUNNYKUMAR1232/Hypergro-project#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "http-errors": "^2.0.0",
+    "mongoose": "^8.15.1",
+    "morgan": "^1.10.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.18",
+    "@types/csurf": "^1.11.5",
+    "@types/express": "^5.0.2",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.15.26",
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  }
+}
