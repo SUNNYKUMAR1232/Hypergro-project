@@ -19,8 +19,16 @@ export class AuthService {
       throw new Error('Invalid credentials')
     }
 
-    const accessToken = TokenUtils.generateAccessToken({ userId: user._id })
-    const refreshToken = TokenUtils.generateRefreshToken({ userId: user._id })
+    const accessToken = TokenUtils.generateAccessToken({
+      userId: user._id,
+      roles: user.roles,
+      blocked: user.blocked
+    })
+    const refreshToken = TokenUtils.generateRefreshToken({
+      userId: user._id,
+      roles: user.roles,
+      blocked: user.blocked
+    })
 
     await redisClient.set(`refresh:${user._id}`, refreshToken, {
       EX: 1 * 86400
@@ -40,12 +48,16 @@ export class AuthService {
     const stored = await redisClient.get(`refresh:${decoded.userId}`)
     if (stored !== oldRefreshToken) throw new Error('Invalid refresh token')
     const newAccessToken = TokenUtils.generateAccessToken({
-      userId: decoded.userId
+      userId: decoded.userId,
+      roles: decoded.roles,
+      blocked: decoded.blocked
     })
     var newRefreshToken = oldRefreshToken
     if (!stored) {
       const newRefreshToken = TokenUtils.generateRefreshToken({
-        userId: decoded.userId
+        userId: decoded.userId,
+        roles: decoded.roles,
+        blocked: decoded.blocked
       })
       await redisClient.set(`refresh:${decoded.userId}`, newRefreshToken, {
         EX: 1 * 86400

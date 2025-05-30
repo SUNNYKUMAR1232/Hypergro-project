@@ -1,5 +1,5 @@
-const tsPlugin = require('@typescript-eslint/eslint-plugin');
-const tsParser = require('@typescript-eslint/parser');
+const tsPlugin = require('@typescript-eslint/eslint-plugin')
+const tsParser = require('@typescript-eslint/parser')
 
 module.exports = [
   {
@@ -7,13 +7,13 @@ module.exports = [
     languageOptions: {
       parser: tsParser,
       ecmaVersion: 2021,
-      sourceType: 'module',
+      sourceType: 'module'
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
+      '@typescript-eslint': tsPlugin
     },
     rules: {
       // Add custom rules here if needed
-    },
-  },
-];
+    }
+  }
+]

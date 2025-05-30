@@ -35,4 +35,22 @@ export class UserService {
   async getAllUsers() {
     return User.find().select('-passwordHash') // Exclude password hash
   }
+  async userBlock(userId: string, block: boolean) {
+    const user = await User.findById(userId)
+    if (!user) throw new Error('User not found')
+    user.blocked = block
+    await user.save()
+    return { message: `User ${block ? 'blocked' : 'unblocked'} successfully` }
+  }
+  async assignRole(userId: string, roles: string[]) {
+    const user = await User.findById(userId)
+    if (!user) throw new Error('User not found')
+    const newRoles = roles.filter((role) => !user.roles.includes(role))
+    if (newRoles.length > 0) {
+      user.roles.push(...newRoles)
+      await user.save()
+      return { message: `Role(s) ${newRoles.join(', ')} assigned successfully` }
+    }
+    return { message: `User already has role(s) ${roles.join(', ')}` }
+  }
 }

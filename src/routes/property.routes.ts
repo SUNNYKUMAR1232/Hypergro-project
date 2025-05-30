@@ -9,28 +9,20 @@ import {
   updatePropertyByUser,
   recommendProperty
 } from '../controllers/property.controller'
-import { authenticate } from '../middleware/auth.middleware'
+import { adminOnly, authenticate, isblocked, isOwner } from '../middleware/auth.middleware'
+import { asyncHandler } from '../utils/asyncHandler'
 
 const router = express.Router()
 
-// 🔐 Create property (auth required)
-router.post('/', authenticate, createProperty)
+router.post('/', authenticate, asyncHandler(createProperty))
+router.get('/', asyncHandler(getAllProperties))
+router.get('/search', asyncHandler(searchProperties))
+router.get('/:id', asyncHandler(getPropertyById))
 
-// 🌐 Get all properties (optionally with filters)
-router.get('/', getAllProperties)
+router.put('/:id', authenticate,isblocked,isOwner, asyncHandler(updatePropertys))
+router.put('/addUser/:id', authenticate,,isblocked,isOwner, asyncHandler(updatePropertyByUser))
 
-// 🔍 Search / advanced filtering (should be before :id to avoid conflicts)
-router.get('/search', searchProperties)
+router.delete('/:id', authenticate,isblocked,adminOnly, asyncHandler(deleteProperty))
 
-// 🔎 Get single property by ID
-router.get('/:id', getPropertyById)
-
-// ✏️ Update property (only owner)
-router.put('/:id', authenticate, updatePropertys)
-router.put('/addUser/:id', authenticate, updatePropertyByUser)
-
-// ❌ Delete property (only owner)
-router.delete('/:id', authenticate, deleteProperty)
-
-router.post('/recommend', authenticate, recommendProperty)
+router.post('/recommend', authenticate, asyncHandler(recommendProperty))
 export default router
