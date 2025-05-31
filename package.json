@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_OPTIONS='--max-old-space-size=2048' tsc",
+    "build": " tsc",
     "dev:server": "concurrently \"tsc --watch\" \"nodemon -r tsconfig-paths/register ./dist/server.js\"",
     "format": "prettier --write .",
     "lint": "npx eslint . ",
