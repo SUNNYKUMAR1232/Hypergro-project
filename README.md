@@ -6,157 +6,397 @@ Hypergro-project is a full-stack property management and recommendation platform
 
 ## Tech Stack
 
-- **Backend:** Node.js, Express.js, TypeScript
-- **Database:** MongoDB (Mongoose ODM)
-- **Cache/Session:** Redis
-- **Authentication:** JWT (JSON Web Tokens)
-- **Security:** Helmet, CSRF, CORS
-- **Linting/Formatting:** ESLint (flat config), Prettier
-- **Other:** Docker (for MongoDB and Redis), dotenv, body-parser, morgan
+### Backend Technologies
+
+- **Node.js** (v18.x or higher)
+- **Express.js** (v4.x) - Web framework
+- **TypeScript** (v5.x) - Type-safe JavaScript
+- **MongoDB** (v6.x) - NoSQL database
+- **Redis** (v7.x) - In-memory data store for caching
+- **Mongoose** (v7.x) - MongoDB object modeling
+
+### Security & Performance
+
+- **JWT** - JSON Web Tokens for authentication
+- **Helmet** - Security headers
+- **CSRF Protection** - Cross-Site Request Forgery protection
+- **CORS** - Cross-Origin Resource Sharing
+- **Redis** - Session management and caching
+- **Morgan** - HTTP request logger
+
+### Development Tools
+
+- **ESLint** (flat config) - Code linting
+- **Prettier** - Code formatting
+- **Docker** - Containerization
+- **dotenv** - Environment variables
+- **body-parser** - Request body parsing
+- **morgan** - HTTP request logging
 
 ## Features
 
-- User registration, login, logout, and password reset
-- JWT-based authentication and refresh tokens
-- User roles (user/admin) and block/unblock functionality
-- Property CRUD (Create, Read, Update, Delete) operations
-- Advanced property search and filtering
-- Property recommendations between users
-- Admin routes for user management (block/unblock, assign roles, delete)
-- Caching of property search results with Redis
-- Secure HTTP headers and CSRF protection
-- API error handling and logging
+### Authentication & Authorization
 
-## Folder Structure
+- Secure user registration with email validation
+- JWT-based authentication with refresh tokens
+- Role-based access control (user/admin)
+- Password reset functionality
+- Account blocking/unblocking
+- Session management with Redis
+
+### Property Management
+
+- Complete CRUD operations for properties
+- Advanced search with multiple filters:
+  - Price range
+  - Location
+  - Property type
+  - Features (amenities)
+  - Number of bedrooms/bathrooms
+- Property recommendations system
+- Image upload and management
+- Property status tracking
+
+### User Management
+
+- Profile management
+- User preferences
+- Saved searches
+- Favorite properties
+- Admin dashboard for user management
+- User activity tracking
+
+### Performance & Security
+
+- Redis caching for frequently accessed data
+- Rate limiting
+- Input validation
+- XSS protection
+- SQL injection prevention
+- Secure password hashing
+- API request logging
+
+## Project Structure
 
 ```plain
-
 project/
 │
-├── app.ts
-├── package.json
-├── tsconfig.json
-├── .prettierrc
-├── eslint.config.js
-├── docker-compose.yml
-├── .env.example
-├── README.md
+├── app.ts                 # Application entry point
+├── package.json          # Project dependencies and scripts
+├── tsconfig.json         # TypeScript configuration
+├── .prettierrc           # Prettier code formatting rules
+├── eslint.config.js      # ESLint configuration
+├── docker-compose.yml    # Docker services configuration
+├── .env.example          # Example environment variables
+├── README.md             # Project documentation
 │
-├── common/
+├── common/               # Shared configurations
 │   └── config/
-│       ├── cors.config.ts
-│       ├── db.config.ts
-│       ├── env.config.ts
-│       ├── helmet.config.ts
-│       ├── morgan.config.ts
-│       └── redis.config.ts
+│       ├── cors.config.ts    # CORS settings
+│       ├── db.config.ts      # MongoDB connection
+│       ├── env.config.ts     # Environment variables
+│       ├── helmet.config.ts  # Security headers
+│       ├── morgan.config.ts  # Request logging
+│       └── redis.config.ts   # Redis connection
 │
 ├── src/
-│   ├── controllers/
-│   │   ├── auth.controller.ts
-│   │   ├── property.controller.ts
-│   │   └── user.controller.ts
+│   ├── controllers/      # Request handlers
+│   │   ├── auth.controller.ts    # Authentication logic
+│   │   ├── property.controller.ts # Property operations
+│   │   └── user.controller.ts    # User management
 │   │
-│   ├── middleware/
-│   │   └── auth.middleware.ts
+│   ├── middleware/       # Express middleware
+│   │   ├── auth.middleware.ts    # Authentication checks
+│   │   ├── error.middleware.ts   # Error handling
+│   │   └── validation.middleware.ts # Request validation
 │   │
-│   ├── models/
-│   │   ├── property.model.ts
-│   │   └── user.model.ts
+│   ├── models/          # Database models
+│   │   ├── property.model.ts     # Property schema
+│   │   └── user.model.ts         # User schema
 │   │
-│   ├── routes/
-│   │   ├── auth.routes.ts
-│   │   ├── property.routes.ts
-│   │   └── user.routes.ts
+│   ├── routes/          # API routes
+│   │   ├── auth.routes.ts        # Auth endpoints
+│   │   ├── property.routes.ts    # Property endpoints
+│   │   └── user.routes.ts        # User endpoints
 │   │
-│   ├── services/
-│   │   ├── auth.service.ts
-│   │   ├── property.service.ts
-│   │   └── user.service.ts
+│   ├── services/        # Business logic
+│   │   ├── auth.service.ts       # Auth operations
+│   │   ├── property.service.ts   # Property operations
+│   │   └── user.service.ts       # User operations
 │   │
-│   ├── types/
-│   │   └── express.d.ts
+│   ├── types/           # TypeScript types
+│   │   ├── express.d.ts          # Express type extensions
+│   │   └── models.d.ts           # Model interfaces
 │   │
-│   └── utils/
-│       └── asyncHandler.ts
-└── dist/   # Compiled JS output (ignored by git, not committed)
-
+│   └── utils/           # Helper functions
+│       ├── asyncHandler.ts       # Async error handling
+│       ├── logger.ts             # Logging utility
+│       └── validators.ts         # Input validation
+│
+└── dist/                # Compiled JavaScript (git-ignored)
 ```
-
-> **Note:**  
-> - All TypeScript source code is under `src/`.  
-> - `common/config` holds shared configuration files.  
-> - `controllers` contains route handler logic.  
-> - `middleware` contains Express middleware.  
-> - `models` contains Mongoose schemas/models.  
-> - `routes` contains Express route definitions.  
-> - `services` contains business logic and data access.  
-> - `types` holds custom TypeScript type definitions.  
-> - `dist` is for compiled output (after `tsc`).
 
 ## Installation
 
+### Prerequisites
+
+- Node.js (v18.x or higher)
+- Docker and Docker Compose
+- Git
+- MongoDB (if not using Docker)
+- Redis (if not using Docker)
+
+### Step-by-Step Setup
+
 1. **Clone the repository**
 
-      ```sh
-
-      git clone https://github.com/SUNNYKUMAR1232/Hypergro-project.git
-      cd Hypergro-project
-
-      ```
+   ```sh
+   git clone https://github.com/SUNNYKUMAR1232/Hypergro-project.git
+   cd Hypergro-project
+   ```
 
 2. **Install dependencies**
 
-      ```sh
+   ```sh
+   npm install
+   ```
 
-      npm install
+3. **Environment Configuration**
+   Create a `.env` file in the root directory:
 
-      ```
+   ```env
+   # Server Configuration
+   PORT=5000
+   HOST=localhost
+   NODE_ENV=development
 
-3. **Set up environment variables**
+   # MongoDB Configuration
+   MONGODB_URI=mongodb://admin:password@localhost:27017/your-db
+   MONGODB_USER=admin
+   MONGODB_PASS=password
 
-      Create a `.env` file in the root directory and add your configuration (see `.env.example`):
+   # JWT Configuration
+   JWT_SECRET=your_jwt_secret_key
+   JWT_EXPIRES_IN=1h
+   REFRESH_SECRET=your_refresh_token_secret
+   REFRESH_EXPIRES_IN=7d
 
-      ```env
+   # Redis Configuration
+   REDIS_URL=redis://localhost:6379
+   REDIS_PASSWORD=your_redis_password
 
-      PORT=5000
-      HOST=localhost
-      MONGODB_URI=mongodb://admin:password@localhost:27017/your-db
-      JWT_SECRET=your_jwt_secret
-      REFRESH_SECRET=your_refresh_secret
-      REDIS_URL=redis://localhost:6379
+   # Security
+   CORS_ORIGIN=http://localhost:3000
+   RATE_LIMIT_WINDOW=15m
+   RATE_LIMIT_MAX=100
 
-      ```
+   # Logging
+   LOG_LEVEL=debug
+   ```
 
-4. **Start MongoDB and Redis using Docker Compose**
+4. **Start Services with Docker**
 
-      ```sh
+   ```sh
+   docker-compose up -d
+   ```
 
-      docker-compose up -d
+   This will start:
+   - MongoDB on port 27017
+   - Redis on port 6379
 
-      ```
+5. **Build and Run**
 
-5. **Build and run the server**
+   ```sh
+   # Development mode with hot-reload
+   npm run dev
 
-      ```sh
+   # Production build
+   npm run build
+   npm start
+   ```
 
-      npm run dev
+6. **Development Tools**
 
-      ```
+   ```sh
+   # Lint code
+   npm run lint
 
-6. **Lint and format code (optional)**
+   # Format code
+   npm run format
 
-      ```sh
+   # Run tests
+   npm test
+   ```
 
-      npm run lint
-      npm run format
+### Environment Variables Explained
 
-      ```
+| Variable          | Description               | Default     | Required |
+| ----------------- | ------------------------- | ----------- | -------- |
+| PORT              | Server port               | 5000        | No       |
+| HOST              | Server host               | localhost   | No       |
+| NODE_ENV          | Environment               | development | No       |
+| MONGODB_URI       | MongoDB connection string | -           | Yes      |
+| JWT_SECRET        | JWT signing key           | -           | Yes      |
+| REFRESH_SECRET    | Refresh token secret      | -           | Yes      |
+| REDIS_URL         | Redis connection URL      | -           | Yes      |
+| CORS_ORIGIN       | Allowed origins           | *           | No       |
+| RATE_LIMIT_WINDOW | Rate limit window         | 15m         | No       |
+| RATE_LIMIT_MAX    | Max requests per window   | 100         | No       |
 
-The API will be available at [http://localhost:5000/api/v1/](http://localhost:5000/api/v1/).
+## API Documentation
 
-Use tools like **Postman** or **Insomnia** to interact with the endpoints.
+## API Routes Documentation
+
+### Authentication Routes (`/api/v1/auth`)
+
+| Method | Endpoint          | Description             | Auth Required |
+| ------ | ----------------- | ----------------------- | ------------- |
+| POST   | `/register`       | Register new user       | No            |
+| POST   | `/login`          | User login              | No            |
+| POST   | `/refresh`        | Refresh access token    | Yes           |
+| POST   | `/reset/initiate` | Initiate password reset | No            |
+| POST   | `/reset/confirm`  | Confirm password reset  | No            |
+
+### Property Routes (`/api/v1/properties`)
+
+| Method | Endpoint       | Description          | Auth Required | Middleware                         |
+| ------ | -------------- | -------------------- | ------------- | ---------------------------------- |
+| POST   | `/`            | Create new property  | Yes           | authenticate                       |
+| GET    | `/`            | Get all properties   | No            | -                                  |
+| GET    | `/search`      | Search properties    | No            | -                                  |
+| GET    | `/:id`         | Get property by ID   | No            | -                                  |
+| PUT    | `/:id`         | Update property      | Yes           | authenticate, isblocked, isOwner   |
+| PUT    | `/addUser/:id` | Add user to property | Yes           | authenticate, isblocked, isOwner   |
+| DELETE | `/:id`         | Delete property      | Yes           | authenticate, isblocked, adminOnly |
+| POST   | `/recommend`   | Recommend property   | Yes           | authenticate                       |
+
+### User Routes (`/api/v1/users`)
+
+| Method | Endpoint           | Description              | Auth Required | Middleware              |
+| ------ | ------------------ | ------------------------ | ------------- | ----------------------- |
+| GET    | `/profile`         | Get user profile         | Yes           | authenticate            |
+| PUT    | `/profile`         | Update user profile      | Yes           | authenticate, adminOnly |
+| PUT    | `/block/:id`       | Block/unblock user       | Yes           | authenticate, adminOnly |
+| PUT    | `/role/:id`        | Assign user role         | Yes           | authenticate, adminOnly |
+| DELETE | `/delete/:id`      | Delete user              | Yes           | authenticate, adminOnly |
+| POST   | `/logout`          | User logout              | Yes           | authenticate            |
+| GET    | `/`                | Get all users            | Yes           | authenticate            |
+| GET    | `/recommendations` | Get user recommendations | Yes           | authenticate            |
+
+### Middleware Functions
+
+1. **authenticate**
+   - Verifies JWT token
+   - Attaches user object to request
+   - Required for protected routes
+
+2. **isblocked**
+   - Checks if user is blocked
+   - Prevents blocked users from accessing certain routes
+
+3. **isOwner**
+   - Verifies if user owns the resource
+   - Used for property updates and deletions
+
+4. **adminOnly**
+   - Restricts access to admin users only
+   - Used for administrative operations
+
+5. **asyncHandler**
+   - Wraps async route handlers
+   - Provides consistent error handling
+
+### Error Handling
+
+All routes return errors in a consistent format:
+
+```json
+{
+  "status": "error",
+  "message": "Error message",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Invalid email format"
+    }
+  ]
+}
+```
+
+Common HTTP Status Codes:
+
+- 200: Success
+- 201: Created
+- 204: No Content
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 500: Internal Server Error
+
+## Development Guidelines
+
+### Code Style
+
+- Use TypeScript for type safety
+- Follow ESLint rules
+- Format code with Prettier
+- Use async/await for asynchronous operations
+- Implement proper error handling
+- Write meaningful comments
+
+### Git Workflow
+
+1. Create feature branch from `main`
+2. Make changes and commit
+3. Push to remote
+4. Create pull request
+5. Code review
+6. Merge to `main`
+
+### Testing
+
+- Write unit tests for services
+- Integration tests for API endpoints
+- Use Jest as testing framework
+- Maintain good test coverage
+
+## Troubleshooting
+
+### Common Issues
+
+1. **MongoDB Connection Error**
+   - Check MongoDB service is running
+   - Verify connection string in .env
+   - Ensure network connectivity
+
+2. **Redis Connection Error**
+   - Check Redis service is running
+   - Verify Redis URL in .env
+   - Check Redis password if set
+
+3. **JWT Authentication Issues**
+   - Verify JWT_SECRET is set
+   - Check token expiration
+   - Ensure proper token format
+
+4. **Port Already in Use**
+   - Check if another process is using the port
+   - Change PORT in .env
+   - Kill the process using the port
 
 ## License
 
 MIT
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Support
+
+For support, email <support@hypergro.com> or create an issue in the repository.
