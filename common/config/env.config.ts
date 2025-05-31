@@ -4,7 +4,7 @@ import fs from 'fs'
 
 function loadEnvironmentVariables() {
   const env = process.env.NODE_ENV || ''
-  const envPath = path.join(process.cwd(), `.env.${env}`)
+  const envPath = path.join(process.cwd(), `.env${env}`)
 
   if (fs.existsSync(envPath)) {
     dotenv.config({ path: envPath })
