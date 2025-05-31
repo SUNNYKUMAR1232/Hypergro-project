@@ -9,7 +9,7 @@
     "lint": "npx eslint . ",
     "lint:fix": "npx eslint --fix .",
     "dev": "pm2 start ecosystem.config.js --env development",
-    "prod": "concurrently \"npm install\" \"pm2 start ecosystem.config.js --env production\""
+    "prod": "pm2 start ecosystem.config.js --env production"
   },
   "repository": {
     "type": "git",
