@@ -14,7 +14,7 @@ import Database from './common/config/db.config'
 import authRoutes from './src/routes/auth.routes'
 import propertyRoutes from './src/routes/property.routes'
 import userRoutes from './src/routes/user.routes'
-
+import compression from 'compression'
 class App {
   private readonly App: Application = express()
   private readonly PORT: string | number = process.env.PORT || 5000
@@ -45,6 +45,7 @@ class App {
     this.App.use(BodyParser.urlencoded({ extended: true }))
     this.App.use(cookieParser())
     this.App.use(cors())
+    this.App.use(compression())
     // Only apply CSRF to non-API routes
     this.App.use((req, res, next) => {
       if (req.path.startsWith('/api')) return next()
