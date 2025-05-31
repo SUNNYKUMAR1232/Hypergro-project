@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { AuthService } from '../services/auth.service'
+import { CustomResponse } from '../utils/errorhandler'
 
 const authService = new AuthService()
 
@@ -8,9 +9,9 @@ export class AuthController {
     try {
       const { email, password, name } = req.body
       const result = await authService.register(email, password, name)
-      res.status(201).json(result)
+      return CustomResponse(res, true, "Registration successful", result, 201)
     } catch (err: any) {
-      res.status(400).json({ error: err.message })
+      return CustomResponse(res, false, err.message || "Registration failed", null, 400)
     }
   }
 
@@ -18,9 +19,9 @@ export class AuthController {
     try {
       const { email, password } = req.body
       const result = await authService.login(email, password)
-      res.json(result)
+      return CustomResponse(res, true, "Login successful", result, 200)
     } catch (err: any) {
-      res.status(401).json({ error: err.message })
+      return CustomResponse(res, false, err.message || "Login failed", null, 401)
     }
   }
 
@@ -28,9 +29,9 @@ export class AuthController {
     try {
       const { refreshToken } = req.body
       const result = await authService.refresh(refreshToken)
-      res.json(result)
+      return CustomResponse(res, true, "Token refreshed successfully", result, 200)
     } catch (err: any) {
-      res.status(401).json({ error: err.message })
+      return CustomResponse(res, false, err.message || "Token refresh failed", null, 401)
     }
   }
 
@@ -38,9 +39,9 @@ export class AuthController {
     try {
       const { email } = req.body
       const result = await authService.initiateReset(email)
-      res.json(result) // Would email in production
+      return CustomResponse(res, true, "Password reset initiated", result, 200)
     } catch (err: any) {
-      res.status(400).json({ error: err.message })
+      return CustomResponse(res, false, err.message || "Password reset initiation failed", null, 400)
     }
   }
 
@@ -48,18 +49,19 @@ export class AuthController {
     try {
       const { userId, token, newPassword } = req.body
       const result = await authService.resetPassword(userId, token, newPassword)
-      res.json(result)
+      return CustomResponse(res, true, "Password reset successful", result, 200)
     } catch (err: any) {
-      res.status(400).json({ error: err.message })
+      return CustomResponse(res, false, err.message || "Password reset failed", null, 400)
     }
   }
+
   static async logout(req: Request, res: Response) {
     try {
       const { userId } = req.body
       await authService.logout(userId)
-      res.json({ message: 'Logged out successfully' })
+      return CustomResponse(res, true, "Logged out successfully", { message: 'Logged out successfully' }, 200)
     } catch (err: any) {
-      res.status(400).json({ error: err.message })
+      return CustomResponse(res, false, err.message || "Logout failed", null, 400)
     }
   }
 }

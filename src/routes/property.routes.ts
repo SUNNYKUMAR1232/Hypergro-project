@@ -20,7 +20,7 @@ router.get('/search', asyncHandler(searchProperties))
 router.get('/:id', asyncHandler(getPropertyById))
 
 router.put('/:id', authenticate,isblocked,isOwner, asyncHandler(updatePropertys))
-router.put('/addUser/:id', authenticate,,isblocked,isOwner, asyncHandler(updatePropertyByUser))
+router.put('/addUser/:id', authenticate,isblocked,isOwner, asyncHandler(updatePropertyByUser))
 
 router.delete('/:id', authenticate,isblocked,adminOnly, asyncHandler(deleteProperty))
 
