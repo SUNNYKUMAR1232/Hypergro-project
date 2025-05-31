@@ -107,7 +107,13 @@ export const searchProperties = async (req: Request, res: Response) => {
     const cachedData = await redisClient.get(cacheKey)
     if (cachedData) {
       console.log('📦 Returning cached data')
-      return CustomResponse(res, true, 'Properties fetched from cache', JSON.parse(cachedData), 200)
+      return CustomResponse(
+        res,
+        true,
+        'Properties fetched from cache',
+        JSON.parse(typeof cachedData === 'string' ? cachedData : cachedData.toString()),
+        200
+      )
     }
     const result = await searchProperty(query)
     await redisClient.setEx(cacheKey, 600, JSON.stringify(result))
