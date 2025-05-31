@@ -4,7 +4,7 @@
     "target": "ES2024",
     "lib": ["ES2024", "dom"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "baseUrl": "./",
     "paths": {
       "common/*": ["common/*"],
