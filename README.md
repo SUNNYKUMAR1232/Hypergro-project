@@ -61,16 +61,11 @@ Hypergro-project is a full-stack property management and recommendation platform
 
 - Profile management
 - User preferences
-- Saved searches
 - Favorite properties
-- Admin dashboard for user management
-- User activity tracking
 
 ### Performance & Security
 
 - Redis caching for frequently accessed data
-- Rate limiting
-- Input validation
 - XSS protection
 - SQL injection prevention
 - Secure password hashing
@@ -187,11 +182,7 @@ project/
 
    # Security
    CORS_ORIGIN=http://localhost:3000
-   RATE_LIMIT_WINDOW=15m
-   RATE_LIMIT_MAX=100
 
-   # Logging
-   LOG_LEVEL=debug
    ```
 
 4. **Start Services with Docker**
@@ -239,9 +230,6 @@ project/
 | JWT_SECRET        | JWT signing key           | -           | Yes      |
 | REFRESH_SECRET    | Refresh token secret      | -           | Yes      |
 | REDIS_URL         | Redis connection URL      | -           | Yes      |
-| CORS_ORIGIN       | Allowed origins           | *           | No       |
-| RATE_LIMIT_WINDOW | Rate limit window         | 15m         | No       |
-| RATE_LIMIT_MAX    | Max requests per window   | 100         | No       |
 
 ## API Documentation
 
@@ -312,14 +300,11 @@ All routes return errors in a consistent format:
 
 ```json
 {
-  "status": "error",
-  "message": "Error message",
-  "errors": [
-    {
-      "field": "email",
-      "message": "Invalid email format"
-    }
-  ]
+    "success": false,
+    "data": null,
+    "message": "Forbidden",
+    "code": 403,
+    "timestamp": "2025-05-31T13:13:32.932Z"
 }
 ```
 
@@ -385,10 +370,6 @@ Common HTTP Status Codes:
    - Change PORT in .env
    - Kill the process using the port
 
-## License
-
-MIT
-
 ## Contributing
 
 1. Fork the repository
@@ -396,7 +377,3 @@ MIT
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
-
-## Support
-
-For support, email <support@hypergro.com> or create an issue in the repository.
