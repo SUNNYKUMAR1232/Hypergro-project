@@ -4,7 +4,7 @@
     "target": "ES2024",
     "lib": ["ES2024", "dom"],
     "module": "commonjs",
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
       "common/*": ["common/*"],
@@ -35,7 +35,6 @@
     "declaration": true,
     "declarationMap": true,
     "isolatedModules": true,
-    "resolvePackageJsonExports": true
   },
   "include": ["src/**/*.ts", "common/**/*.ts", "./app.ts", "./server.ts"],
   "exclude": ["node_modules"]
