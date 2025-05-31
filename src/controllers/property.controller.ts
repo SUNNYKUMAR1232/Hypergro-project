@@ -11,29 +11,30 @@ import {
 } from '../services/property.service'
 import { redisClient } from '../../common/config/redis.comfig'
 import userModel from '../models/user.model'
+import { CustomResponse } from '../utils/errorhandler'
 
 // Create property
 export const createProperty = async (req: Request, res: Response) => {
   try {
     const newProperty = await createPropertys({
       ...req.body,
-      createdBy: req.user!.id // Ensure the user is authenticated
+      createdBy: req.user!.id
     })
-    res.status(201).json(newProperty)
+    return CustomResponse(res, true, 'Property created successfully', newProperty, 201)
   } catch (err) {
     console.error('Error creating property:', err)
-    res.status(500).json({ message: 'Internal Server Error' })
+    return CustomResponse(res, false, 'Error creating property', err, 500)
   }
 }
 
-// Get all properties (optionally filtered)
+// Get all properties
 export const getAllProperties = async (_req: Request, res: Response) => {
   try {
     const properties = await getAllProperty()
-    res.json(properties)
+    return CustomResponse(res, true, 'Properties fetched successfully', properties, 200)
   } catch (err) {
     console.error('Error fetching properties:', err)
-    res.status(500).json({ message: 'Internal Server Error' })
+    return CustomResponse(res, false, 'Error fetching properties', err, 500)
   }
 }
 
@@ -42,11 +43,11 @@ export const getPropertyById = async (req: Request, res: Response) => {
   try {
     const property = await PropertyById(req.params.id)
     if (!property)
-      return res.status(404).json({ message: 'Property not found' })
-    return res.json(property)
+      return CustomResponse(res, false, 'Property not found', null, 404)
+    return CustomResponse(res, true, 'Property fetched successfully', property, 200)
   } catch (err) {
     console.error('Error fetching property:', err)
-    return res.status(500).json({ message: 'Internal Server Error' })
+    return CustomResponse(res, false, 'Error fetching property', err, 500)
   }
 }
 
@@ -54,33 +55,19 @@ export const getPropertyById = async (req: Request, res: Response) => {
 export const updatePropertys = async (req: Request, res: Response) => {
   try {
     const property = await updateProperty(req.params.id, req.user!.id, req.body)
-    if (!property) return res.status(403).json({ message: 'Not authorized' })
-    // Only update allowed fields
+    if (!property)
+      return CustomResponse(res, false, 'Not authorized', null, 403)
     const allowedFields = [
-      'title',
-      'type',
-      'price',
-      'state',
-      'city',
-      'areaSqFt',
-      'bedrooms',
-      'bathrooms',
-      'amenities',
-      'furnished',
-      'availableFrom',
-      'listedBy',
-      'tags',
-      'colorTheme',
-      'rating',
-      'isVerified',
-      'listingType'
+      'title', 'type', 'price', 'state', 'city', 'areaSqFt', 'bedrooms', 'bathrooms',
+      'amenities', 'furnished', 'availableFrom', 'listedBy', 'tags', 'colorTheme',
+      'rating', 'isVerified', 'listingType'
     ]
     if (!Object.keys(req.body).every((key) => allowedFields.includes(key))) {
-      return res.status(400).json({ message: 'Invalid fields in request body' })
+      return CustomResponse(res, false, 'Invalid fields in request body', null, 400)
     }
-    return res.json(property)
+    return CustomResponse(res, true, 'Property updated successfully', property, 200)
   } catch (err) {
-    return res.status(500).json({ message: 'Internal Server Error' })
+    return CustomResponse(res, false, 'Error updating property', err, 500)
   }
 }
 
@@ -88,14 +75,14 @@ export const updatePropertyByUser = async (req: Request, res: Response) => {
   try {
     const result = await Property.findOneAndUpdate(
       { _id: req.params.id, createdBy: { $exists: false } },
-      { $set: { createdBy: new mongoose.Types.ObjectId(req.body!.createdBy) } }
+      { $set: { createdBy: mongoose.Types.ObjectId.createFromHexString(req.body!.createdBy) } }
     )
     if (!result) {
-      return res.status(403).json({ message: ' Owner present' })
+      return CustomResponse(res, false, 'Owner present', null, 403)
     }
-    return res.json(result)
+    return CustomResponse(res, true, 'Property owner updated successfully', result, 200)
   } catch (err) {
-    return res.status(500).json({ message: 'Internal Server Error' })
+    return CustomResponse(res, false, 'Error updating property owner', err, 500)
   }
 }
 
@@ -103,11 +90,12 @@ export const updatePropertyByUser = async (req: Request, res: Response) => {
 export const deleteProperty = async (req: Request, res: Response) => {
   try {
     const result = await deletePropertys(req.params.id, req.user!.id)
-    if (!result) return res.status(403).json({ message: 'Not authorized' })
-    return res.json({ deleted: true })
+    if (!result)
+      return CustomResponse(res, false, 'Not authorized', null, 403)
+    return CustomResponse(res, true, 'Property deleted successfully', { deleted: true }, 200)
   } catch (err) {
     console.error('Delete failed:', err)
-    return res.status(500).json({ message: 'Internal Server Error' })
+    return CustomResponse(res, false, 'Error deleting property', err, 500)
   }
 }
 
@@ -119,14 +107,13 @@ export const searchProperties = async (req: Request, res: Response) => {
     const cachedData = await redisClient.get(cacheKey)
     if (cachedData) {
       console.log('📦 Returning cached data')
-      return res.json(JSON.parse(cachedData))
+      return CustomResponse(res, true, 'Properties fetched from cache', JSON.parse(cachedData), 200)
     }
     const result = await searchProperty(query)
-    //  Store result in cache for 10 minutes
     await redisClient.setEx(cacheKey, 600, JSON.stringify(result))
-    return res.json(result)
+    return CustomResponse(res, true, 'Properties fetched successfully', result, 200)
   } catch (err) {
-    return res.status(500).json({ message: 'Server error', error: err })
+    return CustomResponse(res, false, 'Error searching properties', err, 500)
   }
 }
 
@@ -137,31 +124,28 @@ export const recommendProperty = async (req: Request, res: Response) => {
   try {
     const recipient = await userModel.findOne({ email })
     if (!recipient)
-      return res.status(404).json({ message: 'Recipient not found' })
+      return CustomResponse(res, false, 'Recipient not found', null, 404)
     const property = await Property.findById(propertyId)
     if (!property)
-      return res.status(404).json({ message: 'Property not found' })
+      return CustomResponse(res, false, 'Property not found', null, 404)
 
-    // Prevent duplicate recommendations
     if (recipient.recommendationsReceived.includes(propertyId)) {
-      return res.status(400).json({ message: 'Property already recommended' })
+      return CustomResponse(res, false, 'Property already recommended', null, 400)
     }
 
     if (!recommendingUserId) {
-      return res.status(400).json({ message: 'Invalid recommending user' })
+      return CustomResponse(res, false, 'Invalid recommending user', null, 400)
     }
 
     recipient.recommendationsReceived.push({
-      fromUserId: new mongoose.Types.ObjectId(recommendingUserId),
-      propertyId: new mongoose.Types.ObjectId(propertyId),
+      fromUserId: mongoose.Types.ObjectId.createFromHexString(recommendingUserId),
+      propertyId: mongoose.Types.ObjectId.createFromHexString(propertyId),
       date: new Date()
     })
     await recipient.save()
 
-    return res
-      .status(200)
-      .json({ message: 'Property recommended successfully' })
+    return CustomResponse(res, true, 'Property recommended successfully', null, 200)
   } catch (err) {
-    return res.status(500).json({ message: 'Server error', error: err })
+    return CustomResponse(res, false, 'Error recommending property', err, 500)
   }
 }

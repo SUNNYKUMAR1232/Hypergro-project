@@ -3,9 +3,9 @@
 
   "name": "my-node-app",
 
-  "builds": [{ "src": "server.js", "use": "@vercel/node" }],
+  "builds": [{ "src": "./dist/server.js", "use": "@vercel/node" }],
 
-  "routes": [{ "src": "/(.*)", "dest": "/server.js" }],
+  "routes": [{ "src": "/(.*)", "dest": "./dist/server.js" }],
   "env": {
     "NODE_ENV": "production",
     "MONGO_URI": "mongodb+srv://sunnykumar23232JweuAXBcJxCPyr8:Sunny45@cluster0.0o2tdqb.mongodb.net/",
