@@ -50,15 +50,6 @@ class App {
       if (req.path.startsWith('/api')) return next()
       return csrf({ cookie: true })(req, res, next)
     })
-    // view engine setup
-    //     this.App.set('views', path.join(__dirname, '../dist/views'))
-    //     this.App.set('view engine', 'ejs')
-
-    //     // Serve static files from the public directory
-    //     this.App.use(
-    //       '/api/public',
-    //       express.static(path.join(__dirname, '../dist/public'))
-    //     )
   }
 
   private initRoutes() {
